@@ -1,0 +1,25 @@
+{
+  "name": "sandscape",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server/src/index.ts",
+  "scripts": {
+    "start": "tsx --env-file=.env server/src/index.ts",
+    "dev": "tsx --env-file=.env --watch server/src/index.ts",
+    "deployment": "tsx --env-file=.env server/src/deployment.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2"
+  },
+  "packageManager": "pnpm@9.14.2",
+  "engines": {
+    "node": ">=21.0.0"
+  },
+  "dependencies": {
+    "discord.js": "^14.16.3"
+  }
+}
