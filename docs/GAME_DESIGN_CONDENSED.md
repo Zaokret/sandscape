@@ -3,6 +3,8 @@
 **Concept:**  
 A Discord-based, Mars-themed survival and expansion game. Players join colony threads, adopt roles (Technologist, Botanist, Diplomat), manage resources, and shape laws and economies. Achieving sustainability unlocks new planets and endless growth.
 
+Spaceship - The Ark is carrying the last remains of humanity, in desperation they've started terraforming Mars.
+
 **Technical Setup:**
 
 - Node.js, Postgres, Discord API.
