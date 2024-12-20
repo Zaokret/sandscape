@@ -12,6 +12,8 @@ orm: Sequelize
 
 process manager: pm2
 
+job scheduler: bree
+
 # art direction
 
 daily updates: https://www.reddit.com/r/midjourney/comments/1hg7sn9/snapchat_stories_from_mars/
