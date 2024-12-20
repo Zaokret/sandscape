@@ -9,13 +9,16 @@ upgrade cost increase is a exponental increase
 player chooses which production he wants to buy boosts for
 random reward when long idle
 
+- tickets
+- startkit
+
 ### player colony starter default
 
 greenpod (uses energy)
 
 - oxygen (limited)
 - food (use or sell)
-- water (use or teraform)
+- water (use or teraform or sell for huge)
 
 factory (uses energy)
 
@@ -27,8 +30,8 @@ terraforming progress increase 0% on a normal tile with a starter kit
 
 normal tiles:
 
-- planes (+greens)
-- mountains (+techies)
+- planes (+greens 20% more food yield)
+- mountains (+techies 20% more resource)
 
 special tiles:
 
@@ -41,8 +44,9 @@ special tiles:
 
 buy:
 
+- base resource
 - seeds (biodiversity)
-- robots (specialization)
+- robots (specialization, productivity)
 
 tech modes:
 
