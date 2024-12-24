@@ -3,11 +3,13 @@
 package manager: pnpm
 
 libs: discord.js, nodejs
+
 dev: typescript, tsx
 
 logger: pino
 
 db: postgres
+
 orm: drizzle
 
 process manager: pm2

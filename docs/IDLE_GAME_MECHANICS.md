@@ -75,28 +75,6 @@ when a blueprint is sold,
 couple of cycles later merch appear in the market,
 blueprint seller gets % of sold merch
 
-act:
-
-- craft (meta loop)
-
-# commands
-
-global
-
-- /buy
-- /sell
-- /craft
-- /teraform
-- /research
-
-techies
-
-- /mine
-
-botanists
-
-- /cook
-
 # terraforming rating - victory points
 
 heat
