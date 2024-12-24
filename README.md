@@ -8,7 +8,7 @@ dev: typescript, tsx
 logger: pino
 
 db: postgres
-orm: Sequelize
+orm: drizzle
 
 process manager: pm2
 
