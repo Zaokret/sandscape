@@ -18,6 +18,8 @@ job scheduler: bree
 
 daily updates: https://www.reddit.com/r/midjourney/comments/1hg7sn9/snapchat_stories_from_mars/
 
+starmap: https://observablehq.com/@d3/star-map
+
 # discord js docs
 
 https://discordjs.guide/#before-you-begin
