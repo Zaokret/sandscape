@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 import { pathToFileURL } from "node:url";
-import { SlashCommand } from "../types";
+import { SlashCommand } from "./types";
 
 export async function getCommands() {
   const commands: SlashCommand[] = [];
