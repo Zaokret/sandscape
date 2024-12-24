@@ -13,7 +13,11 @@ export async function getEvents() {
     const filePath = path.join(eventsPath, file);
     const imported = await import(pathToFileURL(filePath).toString());
     const event = imported.default;
-    events.push(event);
+    if ("name" in event && "once" in event && "execute" in event) {
+      events.push(event);
+    } else {
+      console.log(`[WARNING] The event at ${filePath} is missing a required property.`);
+    }
   }
   return events;
 }

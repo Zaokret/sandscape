@@ -24,7 +24,7 @@ starmap: https://observablehq.com/@d3/star-map
 
 https://discordjs.guide/#before-you-begin
 
-# db
+# db setup
 
 - [download postgres v17.2](https://www.postgresql.org/)
 - create sandscape database
