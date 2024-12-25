@@ -1,40 +1,38 @@
-import { pgTable, integer, text, timestamp, decimal, char, serial, uuid, primaryKey } from "drizzle-orm/pg-core"
+import { pgTable, integer, timestamp, decimal, char, serial, uuid, boolean } from "drizzle-orm/pg-core"
 
-// Users table
+//
+//  USERS
+//
 export const users = pgTable("users", {
   id: uuid().defaultRandom().primaryKey(),
-  discordId: char({ length: 256 }).notNull(),
+  discordId: char({ length: 256 }).notNull().unique(),
 })
 
-// Wallet table
-export const wallets = pgTable(
-  "wallets",
-  {
-    userId: integer()
-      .references(() => users.id)
-      .notNull(),
-    currencyId: integer()
-      .references(() => currencies.id)
-      .notNull(),
-    count: decimal().default("0").notNull(),
-  },
-  (wallet) => {
-    return [
-      {
-        pk: primaryKey({ columns: [wallet.userId, wallet.currencyId] }),
-      },
-    ]
-  }
-)
-
-// Currency table
+//
+//  CURRENCIES
+//
 export const currencies = pgTable("currencies", {
   id: serial().primaryKey(),
-  name: char({ length: 256 }).notNull(),
-  symbol: char({ length: 256 }).notNull(),
+  name: char({ length: 256 }).notNull().unique(),
+  symbol: char({ length: 256 }).notNull().unique(),
 })
 
-// ExchangeRate table
+//
+//  WALLETS
+//
+export const wallets = pgTable("wallets", {
+  userId: uuid()
+    .references(() => users.id)
+    .notNull(),
+  currencyId: integer()
+    .references(() => currencies.id)
+    .notNull(),
+  count: decimal().default("0").notNull(),
+})
+
+//
+//  EXCHANGE RATES
+//
 export const exchangeRates = pgTable("exchange_rates", {
   baseCurrencyId: integer()
     .references(() => currencies.id)
@@ -45,219 +43,339 @@ export const exchangeRates = pgTable("exchange_rates", {
   rate: decimal().notNull(),
 })
 
-// Planet table
+//
+//  PLANET TYPES
+//
+export const planetTypes = pgTable("planet_types", {
+  id: serial().primaryKey(),
+  name: char({ length: 256 }).notNull().unique(),
+})
+
+//
+//  PLANETS
+//
 export const planets = pgTable("planets", {
-  id: integer().primaryKey().autoIncrement(),
+  id: uuid().defaultRandom().primaryKey(),
   name: char({ length: 256 }).notNull(),
   typeId: integer().references(() => planetTypes.id),
 })
 
-// PlanetType table
-export const planetTypes = pgTable("planet_types", {
-  id: integer().primaryKey().autoIncrement(),
-  name: char({ length: 256 }).notNull(),
-})
-
-// TileType table
+//
+//  TILE TYPES
+//
 export const tileTypes = pgTable("tile_types", {
-  id: integer().primaryKey().autoIncrement(),
+  id: serial().primaryKey(),
   name: char({ length: 256 }).notNull(),
-  planetTypeIds: text().array().notNull(), // Assuming array of integers
+  planetTypeIds: integer().array().notNull(),
 })
 
-// Tile table
+//
+//  TILES
+//
 export const tiles = pgTable("tiles", {
-  id: integer().primaryKey().autoIncrement(),
+  id: uuid().defaultRandom().primaryKey(),
   type: integer().references(() => tileTypes.id),
 })
 
-// Colony table
+//
+//  COLONIES
+//
 export const colonies = pgTable("colonies", {
-  id: integer().primaryKey().autoIncrement(),
+  id: uuid().defaultRandom().primaryKey(),
   name: char({ length: 256 }),
   createdAt: timestamp().notNull(),
-  rating: float().notNull(),
+  rating: decimal().default("0"),
   planetTypeId: integer().references(() => planetTypes.id),
 })
 
-// Colonist table
-export const colonists = pgTable("colonists", {
-  userId: integer().references(() => users.id),
-  colonyId: integer().references(() => colonies.id),
-  joinedAt: timestamp().notNull(),
-  roleId: integer().references(() => colonistRoles.id),
-})
-
-// ColonistRole table
+//
+//  COLONIST ROLES
+//
 export const colonistRoles = pgTable("colonist_roles", {
-  id: integer().primaryKey().autoIncrement(),
-  name: char({ length: 256 }).notNull(),
+  id: serial().primaryKey(),
+  name: char({ length: 256 }).notNull().unique(),
 })
 
-// ColonyTile table
+//
+//  COLONISTS
+//
+export const colonists = pgTable("colonists", {
+  id: uuid().defaultRandom().primaryKey(),
+  userId: uuid()
+    .references(() => users.id)
+    .notNull(),
+  colonyId: uuid()
+    .references(() => colonies.id)
+    .notNull(),
+  joinedAt: timestamp().notNull(),
+  roleId: integer()
+    .references(() => colonistRoles.id)
+    .notNull(),
+})
+
+//
+//  COLONY TILES
+//
 export const colonyTiles = pgTable("colony_tiles", {
-  tileId: integer().references(() => tiles.id),
-  colonyId: integer().references(() => colonies.id),
-  progress: float().notNull(),
+  tileId: uuid()
+    .references(() => tiles.id)
+    .notNull(),
+  colonyId: uuid()
+    .references(() => colonies.id)
+    .notNull(),
+  progress: decimal().default("0"),
   claimedAt: timestamp().notNull(),
 })
 
-// ColonistActionType table
+//
+//  COLONIST ACTION TYPES
+//
 export const colonistActionTypes = pgTable("colonist_action_types", {
-  id: integer().primaryKey().autoIncrement(),
+  id: serial().primaryKey(),
   role: integer().references(() => colonistRoles.id),
   name: char({ length: 256 }).notNull(),
+  // add cooldown info if needed
 })
 
-// ColonistAction table
+//
+//  COLONIST ACTIONS
+//
 export const colonistActions = pgTable("colonist_actions", {
-  colonistId: integer().references(() => colonists.userId),
-  typeId: integer().references(() => colonistActionTypes.id),
-  lastUsed: timestamp(),
+  colonistId: uuid()
+    .references(() => colonists.id)
+    .notNull(),
+  typeId: integer()
+    .references(() => colonistActionTypes.id)
+    .notNull(),
+  lastUsed: timestamp().default(new Date("January 1, 1970")),
 })
 
-// Item table
-export const items = pgTable("items", {
-  id: integer().primaryKey().autoIncrement(),
-  name: char({ length: 256 }).notNull(),
-  typeId: integer().references(() => itemTypes.id),
-})
-
-// ItemType table
+//
+//  ITEM TYPES
+//
 export const itemTypes = pgTable("item_types", {
-  id: integer().primaryKey().autoIncrement(),
-  name: char({ length: 256 }).notNull(),
+  id: serial().primaryKey(),
+  name: char({ length: 256 }).notNull().unique(),
   stackLimit: integer().notNull(),
-  price: float(),
+  price: decimal(),
   recipeId: integer().references(() => itemTypeRecipes.id),
   tier: integer(),
   consumable: boolean().notNull(),
-  duration: integer().notNull(),
+  duration: integer().notNull(), // milliseconds
   sourceId: integer().references(() => eventSources.id),
 })
 
-// ItemTypeRecipe table
+//
+//  ITEM TYPE RECIPES
+//
 export const itemTypeRecipes = pgTable("item_type_recipes", {
-  id: integer().primaryKey().autoIncrement(),
-  itemIds: text().array().notNull(), // Assuming array of integers
-  result: integer().references(() => itemTypes.id),
-  userId: integer().references(() => users.id),
+  id: serial().primaryKey(),
+  itemIds: integer()
+    .references(() => itemTypes.id)
+    .array()
+    .notNull(),
+  result: integer()
+    .references(() => itemTypes.id)
+    .array()
+    .notNull(),
+  authorId: uuid()
+    .references(() => users.id)
+    .notNull(), // author
 })
 
-// Inventory table
-export const inventories = pgTable("inventories", {
-  id: integer().primaryKey().autoIncrement(),
-  location: integer().references(() => inventoryLocations.id),
-})
-
-// InventoryItem table
-export const inventoryItems = pgTable("inventory_items", {
-  itemId: integer().references(() => items.id),
-  inventoryId: integer().references(() => inventories.id),
-  count: integer().notNull(),
-})
-
-// InventoryLocation table
-export const inventoryLocations = pgTable("inventory_locations", {
-  id: integer().primaryKey().autoIncrement(),
-  type: char({ length: 256 }).notNull(),
-  locationId: integer().notNull(),
-})
-
-// Upgrade table
-export const upgrades = pgTable("upgrades", {
-  id: integer().primaryKey().autoIncrement(),
+//
+//  ITEMS
+//
+export const items = pgTable("items", {
+  id: uuid().defaultRandom().primaryKey(),
   name: char({ length: 256 }).notNull(),
-  effectId: integer().references(() => effects.id),
-  cost: float().notNull(),
-})
-
-// ColonistUpgrade table
-export const colonistUpgrades = pgTable("colonist_upgrades", {
-  colonistId: integer().references(() => colonists.userId),
-  upgradeId: integer().references(() => upgrades.id),
-})
-
-// ColonyUpgrade table
-export const colonyUpgrades = pgTable("colony_upgrades", {
-  colonyId: integer().references(() => colonies.id),
-  upgradeId: integer().references(() => upgrades.id),
-})
-
-// Terraforming table
-export const terraformings = pgTable("terraformings", {
-  tileId: integer().references(() => tiles.id),
-  planetId: integer().references(() => planets.id),
-  water: float().notNull(),
-  heat: float().notNull(),
-  oxygen: float().notNull(),
-  colonizedAt: timestamp().notNull(),
-  terraformedAt: timestamp().notNull(),
-})
-
-// ItemChange table
-export const itemChanges = pgTable("item_changes", {
-  id: integer().primaryKey().autoIncrement(),
   typeId: integer().references(() => itemTypes.id),
-  count: integer().notNull(),
-  periodId: integer().references(() => periods.id),
-  colonyId: integer().references(() => colonies.id),
-  sourceId: integer().references(() => eventSources.id),
 })
 
-// EventSource table
-export const eventSources = pgTable("event_sources", {
-  id: integer().primaryKey().autoIncrement(),
+//
+//  INVENTORY LOCATIONS
+//
+export const inventoryLocations = pgTable("inventory_locations", {
+  id: serial().primaryKey(),
   name: char({ length: 256 }).notNull(),
 })
 
-// Period table
+//
+//  INVENTORIES
+//
+export const inventories = pgTable("inventories", {
+  id: uuid().defaultRandom().primaryKey(),
+  location: integer()
+    .references(() => inventoryLocations.id)
+    .notNull(),
+})
+
+//
+//  INVENTORY ITEMS
+//
+export const inventoryItems = pgTable("inventory_items", {
+  itemId: uuid()
+    .references(() => items.id)
+    .notNull(),
+  inventoryId: uuid()
+    .references(() => inventories.id)
+    .notNull(),
+  // count can be placed only on items that are not unique, etc.
+})
+
+//
+//  EFFECTS
+//
+export const effectTargetTypes = pgTable("effect_target_types", {
+  id: serial().primaryKey(),
+  name: char({ length: 256 }).notNull().unique(),
+})
+
 export const periods = pgTable("periods", {
-  id: integer().primaryKey().autoIncrement(),
-  name: char({ length: 256 }).notNull(),
+  id: serial().primaryKey(),
+  name: char({ length: 256 }).notNull().unique(),
 })
 
-// Event table
-export const events = pgTable("events", {
-  id: integer().primaryKey().autoIncrement(),
-  name: char({ length: 256 }).notNull(),
-  periodId: integer().references(() => periods.id),
-  sourceId: integer().references(() => eventSources.id),
-  effectId: integer().references(() => effects.id),
+export const eventSources = pgTable("event_sources", {
+  id: serial().primaryKey(),
+  name: char({ length: 256 }).notNull().unique(),
 })
 
-// Effect table
 export const effects = pgTable("effects", {
-  id: integer().primaryKey().autoIncrement(),
+  id: serial().primaryKey(),
   name: char({ length: 256 }).notNull(),
-  periodId: integer().references(() => periods.id),
-  sourceId: integer().references(() => eventSources.id),
+  periodId: integer()
+    .references(() => periods.id)
+    .notNull(),
+  sourceId: integer()
+    .references(() => eventSources.id)
+    .notNull(),
   targetId: integer().notNull(),
-  targetTypeId: integer().references(() => effectTargetTypes.id),
+  targetTypeId: integer()
+    .references(() => effectTargetTypes.id)
+    .notNull(),
   startAt: timestamp(),
   endAt: timestamp(),
 })
 
-// EffectTargetType table
-export const effectTargetTypes = pgTable("effect_target_types", {
-  id: integer().primaryKey().autoIncrement(),
-  name: char({ length: 256 }).notNull(),
-})
-
-// MultiplierEffect table
+//
+//  MULTIPLIER EFFECTS
+//
 export const multiplierEffects = pgTable("multiplier_effects", {
-  effectId: integer().references(() => effects.id),
-  multiplier: float().notNull(),
+  id: serial().primaryKey(),
+  effectId: integer()
+    .references(() => effects.id)
+    .notNull(),
+  multiplier: decimal().notNull(),
 })
 
-// StateEffect table
-export const stateEffects = pgTable("state_effects", {
-  effectId: integer().references(() => effects.id),
-  typeId: integer().references(() => stateEffectTypes.id),
-})
-
-// StateEffectType table
+//
+//  STATE EFFECT TYPES
+//
 export const stateEffectTypes = pgTable("state_effect_types", {
-  id: integer().primaryKey().autoIncrement(),
+  id: serial().primaryKey(),
+  name: char({ length: 256 }).notNull().unique(),
+})
+
+//
+//  STATE EFFECTS
+//
+export const stateEffects = pgTable("state_effects", {
+  id: serial().primaryKey(),
+  effectId: integer()
+    .references(() => effects.id)
+    .notNull(),
+  typeId: integer()
+    .references(() => stateEffectTypes.id)
+    .notNull(),
+})
+
+//
+//  EVENTS
+//
+export const events = pgTable("events", {
+  id: serial().primaryKey(),
   name: char({ length: 256 }).notNull(),
+  periodId: integer()
+    .references(() => periods.id)
+    .notNull(),
+  sourceId: integer()
+    .references(() => eventSources.id)
+    .notNull(),
+  effectId: integer()
+    .references(() => effects.id)
+    .notNull(),
+})
+
+//
+//  UPGRADES
+//
+export const upgrades = pgTable("upgrades", {
+  id: serial().primaryKey(),
+  name: char({ length: 256 }).notNull(),
+  effectId: integer()
+    .references(() => effects.id)
+    .notNull(),
+  cost: decimal().default("0"),
+})
+
+//
+//  COLONIST UPGRADES
+//
+export const colonistUpgrades = pgTable("colonist_upgrades", {
+  colonistId: uuid()
+    .references(() => colonists.id)
+    .notNull(),
+  upgradeId: integer()
+    .references(() => upgrades.id)
+    .notNull(),
+})
+
+//
+//  COLONY UPGRADES
+//
+export const colonyUpgrades = pgTable("colony_upgrades", {
+  colonyId: uuid()
+    .references(() => colonies.id)
+    .notNull(),
+  upgradeId: integer()
+    .references(() => upgrades.id)
+    .notNull(),
+})
+
+//
+//  TERRAFORMINGS
+//
+export const terraformings = pgTable("terraformings", {
+  id: uuid().defaultRandom().primaryKey(),
+  tileId: uuid()
+    .references(() => tiles.id)
+    .notNull(),
+  planetId: uuid()
+    .references(() => planets.id)
+    .notNull(),
+  water: decimal().default("0").notNull(),
+  heat: decimal().default("0").notNull(),
+  oxygen: decimal().default("0").notNull(),
+  colonyId: uuid().references(() => colonies.id),
+  colonizedAt: timestamp(),
+  terraformedAt: timestamp(),
+})
+
+//
+//  ITEM CHANGES
+//
+export const itemChanges = pgTable("item_changes", {
+  id: serial().primaryKey(),
+  typeId: integer()
+    .references(() => itemTypes.id)
+    .notNull(),
+  count: integer().notNull(),
+  periodId: integer()
+    .references(() => periods.id)
+    .notNull(),
+  colonyId: uuid().references(() => colonies.id),
+  sourceId: integer()
+    .references(() => eventSources.id)
+    .notNull(),
 })
