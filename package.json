@@ -13,6 +13,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.16.3",
+    "drizzle-orm": "^0.38.2",
+    "drizzle-seed": "^0.2.1",
+    "pg": "^8.13.1"
+  },
   "devDependencies": {
     "@types/node": "^22.10.2",
     "@types/pg": "^8.11.10",
@@ -22,10 +28,5 @@
   "packageManager": "pnpm@9.14.2",
   "engines": {
     "node": ">=21.0.0"
-  },
-  "dependencies": {
-    "discord.js": "^14.16.3",
-    "drizzle-orm": "^0.38.2",
-    "pg": "^8.13.1"
   }
 }
