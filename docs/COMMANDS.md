@@ -24,9 +24,11 @@ all roles global
 techies role
 
 - /mine
+- /repair #robotID (v2)
 
 botanists role
 
 - /cook
+- /heal #colonistID (v2)
 
 - /mode default-off options: terraform|mine|cook|research

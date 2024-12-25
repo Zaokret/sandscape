@@ -3,6 +3,9 @@ export type User = {
   discordId: string
 }
 
+// all prices are represented in a base currency
+// first currency in the currency table is base currency
+
 // #region Currency
 export type Wallet = {
   userId: User["id"]
@@ -104,10 +107,10 @@ export type ItemType = {
   stackLimit: number // >= 1
   price?: number | undefined
   recipeId?: ItemTypeRecipe["id"] | undefined
-  tier: number | undefined
+  tier?: number | undefined
   consumable: boolean
   duration: number // miliseconds
-  subTypeId: ItemSubType["id"]
+  // subTypeId: ItemSubType["id"]
   sourceId: EventSource["id"]
 }
 
@@ -143,23 +146,27 @@ export type InventoryLocation = {
 // #endregion
 
 // #region Research
-
 export type Upgrade = {
-  colonistRoleId: ColonistRole["id"]
   id: string
   name: string
-  tier: number
-  type: string // define
-  // effects?
+  effectId: Effect["id"]
+  cost: number
 }
 
+export type ColonistUpgrade = {
+  colonistId: Colonist["userId"]
+  upgradeId: Upgrade["id"]
+}
+
+export type ColonyUpgrade = {
+  colonyId: Colony["id"]
+  upgradeId: Upgrade["id"]
+}
 // #endregion
 
 // #region Terraforming
-
-// 0 - 100
-// automatic reduction to keep 0% of daily progress
 export type Terraforming = {
+  tileId: Tile["id"]
   planetId: Planet["id"]
   water: number
   heat: number
@@ -173,20 +180,19 @@ export type ItemChange = {
   typeId: ItemType["id"]
   count: number
   periodId: Period["id"]
-  colonyId: Colony["id"]
+  colonyId: Colony["id"] // or default colony used as a template
   sourceId: EventSource["id"]
 }
 
 export type EventSource = {
   id: string
-  name: "greenpod" | "factory" | "user" | "marketplace" | "planet"
+  name: "greenpod" | "factory" | "user" | "marketplace" | "planet" | "colony" | "colonist"
 }
 
 export type Period = {
   id: string
-  name: "daily" | "hourly" | "weekly"
+  name: "hourly" | "daily" | "weekly"
 }
-
 // #endregion
 
 // #region Events
@@ -195,10 +201,39 @@ export type Event = {
   name: string
   periodId: Period["id"]
   sourceId: EventSource["id"]
+  effectId: Effect["id"]
 }
+// #endregion
 
+// #region Effects
 export type Effect = {
   id: string
-  itemChangeId: ItemChange["id"]
+  name: string
+  periodId: Period["id"]
+  sourceId: EventSource["id"]
+  targetId: string
+  targetTypeId: EffectTargetType["id"]
+  startAt?: Date | undefined
+  endAt?: Date | undefined
+}
+
+export type EffectTargetType = {
+  id: string
+  name: string // effect target can be any of the entities potentialy
+}
+
+export type MultiplierEffect = {
+  effectId: Effect["id"]
+  multiplier: number
+}
+
+export type StateEffect = {
+  effectId: Effect["id"]
+  typeId: StateEffectType["id"]
+}
+
+export type StateEffectType = {
+  id: string
+  name: "disable" | "enable" | "upgrade"
 }
 // #endregion
