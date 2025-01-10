@@ -17,9 +17,8 @@ const reactionAdded: ClientEvent<Events.MessageReactionAdd> = {
       }
     }
 
-    let currency: any = null
-    if (reaction.emoji.name) {
-      currency = await repository.getCurrency(reaction.emoji.name)
+    if (reaction.emoji.name && reaction.message.guildId) {
+      let currency = await repository.getCurrency(reaction.emoji.name, reaction.message.guildId)
       if (currency) {
         console.log(`${reaction.message.author?.username} gained 1 ${currency.name}.`)
       }

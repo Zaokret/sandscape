@@ -8,6 +8,13 @@
       "when": 1736390222084,
       "tag": "0000_many_electro",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1736520090758,
+      "tag": "0001_lean_tinkerer",
+      "breakpoints": true
     }
   ]
 }

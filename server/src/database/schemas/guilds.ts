@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm"
-import { pgTable, varchar, serial, uuid, timestamp, index } from "drizzle-orm/pg-core"
+import { pgTable, varchar, serial, uuid, timestamp, index, primaryKey } from "drizzle-orm/pg-core"
 import { wallets, currencies } from "./currency"
 
 export const guildGroupTypes = pgTable("guild_group_types", {
@@ -48,6 +48,7 @@ export const guildGroupMemberships = pgTable(
     createdAt: timestamp().defaultNow(),
   },
   (table) => ({
+    pk: primaryKey({ columns: [table.groupId, table.guildId] }),
     groupIndex: index("idx_group_id").on(table.groupId),
     guildIndex: index("idx_guild_id").on(table.guildId),
   })
