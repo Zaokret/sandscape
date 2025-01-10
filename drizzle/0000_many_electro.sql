@@ -95,8 +95,6 @@ ALTER TABLE "wallets" ADD CONSTRAINT "wallets_userId_users_id_fk" FOREIGN KEY ("
 ALTER TABLE "wallets" ADD CONSTRAINT "wallets_currencyId_currencies_id_fk" FOREIGN KEY ("currencyId") REFERENCES "public"."currencies"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "idx_group_id" ON "guild_group_memberships" USING btree ("groupId");--> statement-breakpoint
 CREATE INDEX "idx_guild_id" ON "guild_group_memberships" USING btree ("guildId");--> statement-breakpoint
-CREATE INDEX "idx_transactions_from_wallet_id" ON "transactions" USING btree ("fromWalletId");--> statement-breakpoint
-CREATE INDEX "idx_transactions_to_wallet_id" ON "transactions" USING btree ("toWalletId");--> statement-breakpoint
 CREATE INDEX "idx_users_guild_id" ON "users" USING btree ("guildId");--> statement-breakpoint
 CREATE INDEX "idx_users_discord_id" ON "users" USING btree ("discordId");--> statement-breakpoint
 CREATE INDEX "idx_wallets_currency_id" ON "wallets" USING btree ("currencyId");--> statement-breakpoint
